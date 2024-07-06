@@ -3,7 +3,7 @@
 var sumcheck=0
 const livePricing=[]
 var myChart={}
-
+var myInterval
 
 async function init() {
 
@@ -89,8 +89,8 @@ liveReportdiv.classList.add("d-none")
 
 async function homepage() {
 
-    clearInterval()
-
+    
+    clearInterval(myInterval)
         const coinList = document.querySelector("#coinList")
         coinList.classList.remove("d-none")
         
@@ -104,22 +104,11 @@ async function showLiveReport() {
     const ctx = document.getElementById('myChart');
     liveReportdiv.classList.remove("d-none")
   
-
-
-
-setInterval(()=>{
- clearInterval()
-}, 10000);
-
-
    const data=await getCoinliveprice()
-   console.log(Object.values(data)[0]?.USD);
-   console.log(Object.values(data)[1]?.USD);
-   console.log(Object.values(data)[2]?.USD);
-   console.log(Object.values(data)[3]?.USD);
-   console.log(Object.values(data)[4]?.USD);
+
+   
    const event = new Date
-   console.log(event);
+ 
    if(myChart.id===0){
      myChart.destroy()
 }
@@ -127,33 +116,42 @@ setInterval(()=>{
    myChart=new Chart(ctx, {
         type: 'line',
         data: {
-          labels: [event, 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          labels: [event],
           datasets: [{
             label: Object.keys(data)[0]|| "no data",
             data: [Object.values(data)[0]?.USD,],
             borderWidth: 1
           },{
             label:Object.keys(data)[1]|| "no data",
-            data: [Object.values(data)[2]?.USD,],
+            data: [Object.values(data)[1]?.USD,],
             borderWidth: 1
           },
           {
             label:Object.keys(data)[2] || "no data",
-            data: [Object.values(data)[3]?.USD,],
+            data: [Object.values(data)[2]?.USD,],
             borderWidth: 1
           },
           {
             label:Object.keys(data)[3]|| "no data",
-            data: [Object.values(data)[4]?.USD, ],
+            data: [Object.values(data)[3]?.USD, ],
             borderWidth: 1
           },
           {
             label:Object.keys(data)[4]|| "no data",
-            data: [Object.values(data)[5]?.USD,],
+            data: [Object.values(data)[4]?.USD,],
             borderWidth: 1
           }],
         },
         options: {
+            plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: (ctx) => (`${ctx.dataset.label}: ${ctx.raw}`)
+                  }
+                }
+              },
+            
+          
           scales: {
             y: {
               beginAtZero: true
@@ -163,15 +161,37 @@ setInterval(()=>{
       });
       myChart.id=0
      
-
-      setInterval(()=>{
-        clearInterval()
-       }, 10000);
       
+     const myInterval =setInterval(() => {
+        Promise.all([getCoinliveprice()]).then((results) => {
+           let timeevent= new Date
+            addData(myChart, timeevent, Object.values(results[0]))
+        results.splice(0,1)
+        }).catch(() => {
+            console.log("one of the requests failed.")
+        })
+        }, 10000)
+      
+    
+  
+    
 }
 
+
+function addData(chart, label, newData) {
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset,index) => {
+        dataset.data.push(newData[index]?.USD);
+      
+    });
+    chart.update();
+}
+
+
+
+
 function aboutpage() {
-    clearInterval()
+    clearInterval(myInterval)
 
     const aboutdiv = document.querySelector("#aboutdiv")
     aboutdiv.innerHTML=""
