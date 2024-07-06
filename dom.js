@@ -1,4 +1,9 @@
 
+/*  ==================thay are global for the toggle to live price ================== */
+var sumcheck=0
+const livePricing=[]
+var myChart={}
+
 
 async function init() {
 
@@ -6,6 +11,7 @@ async function init() {
 const coinList = document.querySelector("#coinList")
 const liveReportdiv = document.querySelector("#liveReportdiv")
 const aboutdiv = document.querySelector("#aboutdiv")
+liveReportdiv.classList.add("d-none")
 
 
 
@@ -55,7 +61,10 @@ const aboutdiv = document.querySelector("#aboutdiv")
 
         
         aboutdiv.classList.add("d-none")
-        showLiveReport()
+      
+       
+        await showLiveReport()
+        
     
     })
 
@@ -80,7 +89,7 @@ const aboutdiv = document.querySelector("#aboutdiv")
 
 async function homepage() {
 
-    
+    clearInterval()
 
         const coinList = document.querySelector("#coinList")
         coinList.classList.remove("d-none")
@@ -89,25 +98,80 @@ async function homepage() {
         draw(coins)
 }
 
-function showLiveReport() {
-
-
-   
-
-    const liveReportdiv = document.querySelector("#liveReportdiv")
-    liveReportdiv.innerHTML=""
-    liveReportdiv.classList.remove("d-none")
-
-    const para = document.createElement("p")
-    para.innerText="i love pee to the toilet"
-    para.style.color="red"
+async function showLiveReport() {
   
-    liveReportdiv.append(para)
+    const liveReportdiv = document.querySelector("#liveReportdiv")
+    const ctx = document.getElementById('myChart');
+    liveReportdiv.classList.remove("d-none")
+  
 
+
+
+setInterval(()=>{
+ clearInterval()
+}, 10000);
+
+
+   const data=await getCoinliveprice()
+   console.log(Object.values(data)[0]?.USD);
+   console.log(Object.values(data)[1]?.USD);
+   console.log(Object.values(data)[2]?.USD);
+   console.log(Object.values(data)[3]?.USD);
+   console.log(Object.values(data)[4]?.USD);
+   const event = new Date
+   console.log(event);
+   if(myChart.id===0){
+     myChart.destroy()
+}
+      
+   myChart=new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [event, 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          datasets: [{
+            label: Object.keys(data)[0]|| "no data",
+            data: [Object.values(data)[0]?.USD,],
+            borderWidth: 1
+          },{
+            label:Object.keys(data)[1]|| "no data",
+            data: [Object.values(data)[2]?.USD,],
+            borderWidth: 1
+          },
+          {
+            label:Object.keys(data)[2] || "no data",
+            data: [Object.values(data)[3]?.USD,],
+            borderWidth: 1
+          },
+          {
+            label:Object.keys(data)[3]|| "no data",
+            data: [Object.values(data)[4]?.USD, ],
+            borderWidth: 1
+          },
+          {
+            label:Object.keys(data)[4]|| "no data",
+            data: [Object.values(data)[5]?.USD,],
+            borderWidth: 1
+          }],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+      myChart.id=0
+     
+
+      setInterval(()=>{
+        clearInterval()
+       }, 10000);
+      
 }
 
 function aboutpage() {
-
+    clearInterval()
 
     const aboutdiv = document.querySelector("#aboutdiv")
     aboutdiv.innerHTML=""
@@ -270,7 +334,7 @@ async function getCoinInfoId(id) {
  
 }
 
-var sumcheck=0
+
 function checkedtoggle(coin){
    
 
@@ -283,15 +347,46 @@ function checkedtoggle(coin){
         else{
             sumcheck++
             coin.ischecked=true
-            console.log(coin);
+            livePricing.push(coin)
+            
         }
         
     } else {
         sumcheck--
         coin.ischecked=false
-            console.log(coin);
+            
+           const foundIndex=livePricing.findIndex((current)=>current.id===coin.id)
+           if (foundIndex > -1) {
+            livePricing.splice(foundIndex, 1)
+        }
     }
-    console.log(sumcheck);
+  
+}
+
+
+async function getCoinliveprice() {
+    if (livePricing.length===0) {
+        return data=[]
+    }
+    const stringforapi=livePricing.reduce((string, current) => {
+        string=string+current.symbol+","
+          return string
+      }, "") 
+    try {
+        const result = await fetch(`https://min-api.cryptocompare.com/data/pricemulti?fsyms=${stringforapi}&tsyms=USD`, {
+            method: "GET",
+        })
+        const data = await result.json()
+     
+        return data;
+
+    
+       
+        
+    } catch (error) {
+        alert("failed to fetch live price")
+    }
+ 
 }
 
 
