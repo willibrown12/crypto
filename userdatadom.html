@@ -28,13 +28,7 @@
                         <button class="nav-link" id="about">about</button>
                     </li>
                 </ul>
-                <div class="d-flex" >
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="Search">
-                    <div class="form-check">
-                       <input class="form-check-input" id="checkbox" type="checkbox" class="btn btn-lg btn-danger" data-bs-toggle="popover" title="search by id" data-bs-trigger="hover focus" data-bs-content="With this option, you will only find the exact coin you are looking for and not other coins that may include what you searched for.">
-                    </div>
-                    <button class="btn btn-outline-success"  id="buttonSrch">Search</button>
-                  </div>
+                
             </div>
         </div>
         
@@ -51,8 +45,23 @@
         <div id="liveReportdiv">
             <canvas id="myChart"></canvas>
         </div>
+        <div  id="homepage" >
+            <div class="d-flex justify-content-center align-items-center" >
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" id="Search" style="width: 50%;">
+                <div class="form-check">
+                   <input class="form-check-input" id="checkbox" type="checkbox" class="btn btn-lg btn-danger" data-bs-toggle="popover" title="search by id" data-bs-trigger="hover focus" data-bs-content="With this option, you will only find the exact coin you are looking for and not other coins that may include what you searched for.">
+                </div>
+                <button class="btn btn-outline-success m-1"  id="buttonSrch">Search</button>
+                <button class="btn btn-outline-warning m-1"  id="showfavorites">show favorites</button>
+                
+              </div>
+            
+           
+          
         <div id="coinList" class="row">
         </div>
+    </div>
+       
     </div>
 
 
@@ -63,24 +72,18 @@
 
 
 
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" data-bs-backdrop="static">
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          <p class="offcanvas-title" id="offcanvasExampleLabel">Please note: You can select up to five favorites. If you wish to add a new coin, please uncheck one or more favorites and then click "Continue". Exiting the menu or selecting "Cancel" will not add the new coin to your favorites.  </p>
+          
         </div>
         <div class="offcanvas-body">
-          <div>
-            Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+          <div id="offcanvasfavorites">
+           
           </div>
-          <div class="dropdown mt-3">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
-              Dropdown button
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
+         
+          <button class="btn btn-outline-success m-1"  id="buttonadd">add</button>
+          <button class="btn btn-outline-warning m-1"  id="buttoncancel">cancel</button>
           </div>
         </div>
       </div>
@@ -91,9 +94,10 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="dataPractice.js"></script>
-  <script src="dom.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="dom.js"></script>
     <script>
   var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
 var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {

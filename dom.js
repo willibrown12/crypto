@@ -1,6 +1,6 @@
 
 /*  ==================global  ================== ==============================*/
-let sumcheck=0
+
 const livePricing=[]
 let myChart={}
 let myInterval
@@ -8,6 +8,8 @@ const cache = {};
 const loader = document.querySelector("#progressbar")
 const loaderkid = document.querySelector("#progressbarkid")
 let coins2=[]
+var myOffcanvas = document.getElementById('offcanvasExample')
+var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas)
 
 
 
@@ -16,7 +18,7 @@ let coins2=[]
 async function init() {
 
 /*  ==================pages conatainers to use ================== */
-const coinList = document.querySelector("#coinList")
+const coinList = document.querySelector("#homepage")
 const liveReportdiv = document.querySelector("#liveReportdiv")
 const aboutdiv = document.querySelector("#aboutdiv")
 liveReportdiv.classList.add("d-none")
@@ -100,18 +102,32 @@ async function homepage() {
 
     try {
        /*  loader.style.visibility = "visible" */
-    
+       const showfavorites= document.querySelector("#showfavorites")
+       showfavorites.addEventListener("click", ()=>{draw(livePricing)})
         clearInterval(myInterval)
-        const coinList = document.querySelector("#coinList")
+        const coinList = document.querySelector("#homepage")
         coinList.classList.remove("d-none")
+
+
+
+
+        const buttonadd = document.querySelector("#buttonadd")
+      
+        buttonadd.addEventListener("click",()=>{
+            if (livePricing.length>5) {
+                alert("you need to uncheck coin");
+                
+            }
+        else{
+            bsOffcanvas.hide()
+            draw(coins)
+        }})
 
 /*  if (coins[0]===undefined) {
     coins=await getCoins()
 } 
  */
-        
- loaderkid.setAttribute("aria-valuenow","50")
- loaderkid.style.width="50%"
+
 
         draw(coins)
         
@@ -255,6 +271,11 @@ function aboutpage() {
     
 }
 
+
+
+
+
+
 async function getCoins() { try {
 
    const data= await fetch(`https://api.coingecko.com/api/v3/coins/list`) 
@@ -313,10 +334,9 @@ toggleDiv.append(toggle)
 
 if (coin.ischecked===true)
 {toggle.checked=true}
+else{toggle.checked=false}
 /*  ==================toggle event  ================== ==============================*/
 toggle.addEventListener("click", ()=>checkedtoggle(coin))
-
- 
 
 const placeHolderImg= document.createElement("div")
 placeHolderImg.className="col-4 d-flex justify-content-center"
@@ -444,28 +464,90 @@ function checkedtoggle(coin){
    
 
     if (  event.target.checked) {
-        if (sumcheck===5) {
-            
-         alert("you got to maximum capacity")
-         event.target.checked=false
+        if (livePricing.length===5) {
+            livePricing.push(coin)
+            coin.ischecked=true
+            const offcanvasfavorites = document.querySelector("#offcanvasfavorites")
+            offcanvasfavorites.innerHTML=""
+            const favoriteUi=livePricing.map(current =>offCanvasUi(current))
+            offcanvasfavorites.append(...favoriteUi) 
+            bsOffcanvas.show()
+            const buttoncancel = document.querySelector("#buttoncancel") 
+
+
+            buttoncancel.addEventListener("click",()=>{
+                console.log(livePricing.length);
+                bsOffcanvas.hide()
+                coin.ischecked=false
+                if (livePricing.length===6) {
+                    livePricing.pop()
+                }
+                draw(coins) }
+            )
+
+
+
+
+
+
+
+
+
         }
         else{
-            sumcheck++
+            
+            
             coin.ischecked=true
             livePricing.push(coin)
+            
             
         }
         
     } else {
-        sumcheck--
+     
+        
         coin.ischecked=false
-            
+       
            const foundIndex=livePricing.findIndex((current)=>current.id===coin.id)
            if (foundIndex > -1) {
             livePricing.splice(foundIndex, 1)
         }
+        console.log(livePricing);
     }
   
+}
+
+
+
+function offCanvasUi(favorite) {
+    
+    const div = document.createElement("div")
+    const cardTitle = document.createElement("h5")
+    cardTitle.innerText =favorite?.name
+    cardTitle.className="card-title col-10"
+    
+    
+    const toggleDiv =document.createElement("div")
+    toggleDiv.className = "form-check form-switch col-1 d-flex justify-content-center"
+    
+    const toggle =document.createElement("input")
+    toggle.className ="form-check-input  bg-success "
+    toggle.setAttribute("type", "checkbox")
+    toggle.setAttribute("role", "switch")
+    toggleDiv.append(toggle)
+    
+    if (favorite.ischecked===true)
+    {toggle.checked=true}
+    if (favorite.ischecked===false)
+        {toggle.checked=false}
+    /*  ==================toggle event  ================== ==============================*/
+    toggle.addEventListener("click", ()=>checkedtoggle(favorite))
+
+
+ div.append(cardTitle,toggleDiv)
+
+ return div
+
 }
 
 
