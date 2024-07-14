@@ -7,9 +7,9 @@ let myInterval
 const cache = {};
 const loader = document.querySelector("#progressbar")
 const loaderkid = document.querySelector("#progressbarkid")
-let coins2=[]
-var myOffcanvas = document.getElementById('offcanvasExample')
-var bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas)
+let coins=[]
+let myOffcanvas = document.getElementById('offcanvasExample')
+let bsOffcanvas = new bootstrap.Offcanvas(myOffcanvas)
 
 
 
@@ -23,21 +23,6 @@ const liveReportdiv = document.querySelector("#liveReportdiv")
 const aboutdiv = document.querySelector("#aboutdiv")
 liveReportdiv.classList.add("d-none")
 
-
-
-   /* ================== the search function that in the navbar ===============================*/
-    const buttonSrch= document.querySelector("#buttonSrch")
-    buttonSrch.addEventListener("click",() => {
-        homebutton.classList.add("active")
-        liveReport.classList.remove("active")
-        about.classList.remove("active")
-        aboutdiv.classList.add("d-none")
-        
-        liveReportdiv.classList.add("d-none")
-
-         homepage()
-        searchcoin(coins)})
-
    /*  ==================load main page ================== */
     homepage()
 
@@ -46,7 +31,7 @@ liveReportdiv.classList.add("d-none")
 /*  ==================homepage ================== */
 
     const homebutton = document.querySelector("#home")
-    homebutton.addEventListener("click", async () => {
+    homebutton.addEventListener("click",  () => {
         
         homebutton.classList.add("active")
         liveReport.classList.remove("active")
@@ -88,7 +73,7 @@ liveReportdiv.classList.add("d-none")
         coinList.classList.add("d-none")
         liveReportdiv.classList.add("d-none")
 
-        aboutpage()
+        aboutPage()
     
     })
    
@@ -98,19 +83,32 @@ liveReportdiv.classList.add("d-none")
     
 }
 
-async function homepage() {
 
+
+    /*  ==================loading the home page  ================== */
+
+async function homepage() {
+    const spinner= document.querySelector("#spinner")
     try {
-       /*  loader.style.visibility = "visible" */
-       const showfavorites= document.querySelector("#showfavorites")
-       showfavorites.addEventListener("click", ()=>{draw(livePricing)})
+        spinner.classList.remove("d-none")
         clearInterval(myInterval)
         const coinList = document.querySelector("#homepage")
         coinList.classList.remove("d-none")
 
+  /*  ==================search button  ================== */
 
 
+       const buttonSrch= document.querySelector("#buttonSrch")
+    buttonSrch.addEventListener("click",() => {
+        searchcoin(coins)})
+       const showfavorites= document.querySelector("#showfavorites")
+       showfavorites.addEventListener("click", ()=>{draw(livePricing)
+        
+       })
 
+
+        /*  ==================off canvas add button  ================== */
+       
         const buttonadd = document.querySelector("#buttonadd")
       
         buttonadd.addEventListener("click",()=>{
@@ -122,34 +120,50 @@ async function homepage() {
             bsOffcanvas.hide()
             draw(coins)
         }})
-
-/*  if (coins[0]===undefined) {
+ /*  ==================off canvas cancel button  ================== */
+        const buttoncancel = document.querySelector("#buttoncancel") 
+        buttoncancel.addEventListener("click",()=>{
+        
+            bsOffcanvas.hide()
+            
+            if (livePricing.length===6) {
+                const findlastcoin=coins.find((coin)=> coin.id===livePricing[5].id,)
+                findlastcoin.ischecked=false
+                livePricing.pop()
+            }
+            draw(coins) }
+        )
+ /*  ==================fetch data  ================== */
+ if (coins[0]===undefined) {
     coins=await getCoins()
 } 
- */
 
-
+ /*  ==================draw first time  ================== */
         draw(coins)
         
     } catch (error) {
         
     }finally{
       
-       /*  loader.style.visibility = "hidden" */
+        spinner.classList.add("d-none")
      
     }
   
 }
 
 async function showLiveReport() {
-  
+
+     /*  ==================loading page  ================== */
+    clearInterval(myInterval)
     const liveReportdiv = document.querySelector("#liveReportdiv")
     const ctx = document.getElementById('myChart');
     liveReportdiv.classList.remove("d-none")
   
+ /*  ==================fatch data  ================== */
+
    const data=await getCoinliveprice()
 
-   
+    /*  ==================crate chart  ================== */
    const event = new Date
  
    if(myChart.id===0){
@@ -159,7 +173,7 @@ async function showLiveReport() {
    myChart=new Chart(ctx, {
         type: 'line',
         data: {
-          labels: [event],
+          labels: [event.toLocaleTimeString()],
           datasets: [{
             label: Object.keys(data)[0]|| "no data",
             data: [Object.values(data)[0]?.USD,],
@@ -204,22 +218,23 @@ async function showLiveReport() {
       });
       myChart.id=0
      
+
+
+       /*  ==================set Interval to get data and updata chart   ================== */
       
-     const myInterval =setInterval(() => {
+   myInterval =setInterval(() => {
         Promise.all([getCoinliveprice()]).then((results) => {
            let timeevent= new Date
-            addData(myChart, timeevent, Object.values(results[0]))
+         
+            addData(myChart, timeevent.toLocaleTimeString(), Object.values(results[0]))
         results.splice(0,1)
         }).catch(() => {
             console.log("one of the requests failed.")
         })
         }, 10000)
       
-    
-  
-    
 }
-
+ /*  ==================chart js function   ================== */
 
 function addData(chart, label, newData) {
     chart.data.labels.push(label);
@@ -232,8 +247,8 @@ function addData(chart, label, newData) {
 
 
 
-
-function aboutpage() {
+/*  ==================set up about page   ================== */
+function aboutPage() {
     clearInterval(myInterval)
 
     const aboutdiv = document.querySelector("#aboutdiv")
@@ -245,6 +260,8 @@ function aboutpage() {
       aboutdiv.append(para)
 }
 
+
+/*  ==================searchcoin  ================== */
  async function searchcoin(data){
     const searchvalue = document.querySelector("#Search").value
     const searchCheckBox= document.querySelector("#checkbox").checked
@@ -271,10 +288,7 @@ function aboutpage() {
     
 }
 
-
-
-
-
+/*  ==================fetch function for cards ================== */
 
 async function getCoins() { try {
 
@@ -283,11 +297,14 @@ async function getCoins() { try {
  console.log(result);
 return result
     
-} catch (error) {alert("something went wrong")
+} catch (error) {alert("failed to fetch crypto data")
     
 }
     
 }
+
+
+/*  ==================start the ui for cards ================== */
 function draw(data) {
     if (!Array.isArray(data)) return
     const coinList = document.querySelector("#coinList")
@@ -299,10 +316,10 @@ function draw(data) {
 }
 
 
+/*  ==================single card ================== */
 function  getSingleCoinUI(coin){
 
     if (typeof coin !== 'object') return;
-
 
 
 const colCard = document.createElement("div")
@@ -343,7 +360,7 @@ placeHolderImg.className="col-4 d-flex justify-content-center"
 placeHolderImg.innerHTML=""
 const para = document.createElement("p")
 para.className="card-text col-8 mb-0"
-para.innerText=coin?.id
+para.innerText=coin?.symbol
 
 const placeHolderbutton= document.createElement("div")
 placeHolderbutton.className="d-flex align-items-center "
@@ -411,8 +428,9 @@ colCard.append(cardDiv)
 
 
 return  colCard
-
 }
+
+/*  ==================fetch more info  ================== ==============================*/
 async function getCoinInfoId(id) {
  
     try {
@@ -429,6 +447,8 @@ async function getCoinInfoId(id) {
  
 }
 
+
+/*  ==================cache function ================== ==============================*/
 async function getDataFromCacheOrApi(id) {
     const TIMESTAMP_DIFF = 10000;
    
@@ -457,7 +477,7 @@ async function getDataFromCacheOrApi(id) {
 
 
 
-
+/*  ==================toggle function that set up the off canvas ================== ==============================*/
 
 
 function checkedtoggle(coin){
@@ -472,27 +492,6 @@ function checkedtoggle(coin){
             const favoriteUi=livePricing.map(current =>offCanvasUi(current))
             offcanvasfavorites.append(...favoriteUi) 
             bsOffcanvas.show()
-            const buttoncancel = document.querySelector("#buttoncancel") 
-
-
-            buttoncancel.addEventListener("click",()=>{
-                console.log(livePricing.length);
-                bsOffcanvas.hide()
-                coin.ischecked=false
-                if (livePricing.length===6) {
-                    livePricing.pop()
-                }
-                draw(coins) }
-            )
-
-
-
-
-
-
-
-
-
         }
         else{
             
@@ -512,7 +511,7 @@ function checkedtoggle(coin){
            if (foundIndex > -1) {
             livePricing.splice(foundIndex, 1)
         }
-        console.log(livePricing);
+      
     }
   
 }
@@ -520,7 +519,7 @@ function checkedtoggle(coin){
 
 
 function offCanvasUi(favorite) {
-    
+    if (typeof favorite !== 'object') return;
     const div = document.createElement("div")
     const cardTitle = document.createElement("h5")
     cardTitle.innerText =favorite?.name
@@ -550,7 +549,7 @@ function offCanvasUi(favorite) {
 
 }
 
-
+  /*  ==================fetch data for live pricing  ================== ==============================*/
 async function getCoinliveprice() {
     if (livePricing.length===0) {
         return data=[]

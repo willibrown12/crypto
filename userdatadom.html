@@ -12,7 +12,8 @@
     <div class=" sticky-top">
     <nav class="navbar navbar-expand-lg bg-body-tertiary-dark bg-dark"  data-bs-theme="dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <img src="./jason-mask-svgrepo-com (2).svg" style="height: 50px;" alt="">
+            <span class="navbar-brand" href="#">Cryptomaniac</span>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -43,7 +44,7 @@
     <div class="container">
         <div id="aboutdiv"></div>
         <div id="liveReportdiv">
-            <canvas id="myChart"></canvas>
+            <canvas id="myChart" width="80%"></canvas>
         </div>
         <div  id="homepage" >
             <div class="d-flex justify-content-center align-items-center" >
@@ -56,9 +57,13 @@
                 
               </div>
             
-           
+              <div class="text-center mt-4" id="spinner">
+                <div class="spinner-border text-success" role="status">
+                  
+                </div>
+              </div>
           
-        <div id="coinList" class="row">
+        <div id="coinList" class="row  mt-4">
         </div>
     </div>
        
@@ -74,7 +79,7 @@
 
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" data-bs-backdrop="static">
         <div class="offcanvas-header">
-          <p class="offcanvas-title" id="offcanvasExampleLabel">Please note: You can select up to five favorites. If you wish to add a new coin, please uncheck one or more favorites and then click "Continue". Exiting the menu or selecting "Cancel" will not add the new coin to your favorites.  </p>
+          <p class="offcanvas-title" id="offcanvasExampleLabel">Please note: You can select up to five favorites. If you wish to add a new coin, please uncheck one or more favorites and then click "Continue". selecting "Cancel" will not add the new coin to your favorites.  </p>
           
         </div>
         <div class="offcanvas-body">
