@@ -95,6 +95,14 @@ async function homepage() {
         const coinList = document.querySelector("#homepage")
         coinList.classList.remove("d-none")
 
+
+        if (coins[0]===undefined) {
+          coins=await getCoins()
+      } 
+      
+
+        searchcoin(coins)
+
   /*  ==================search button  ================== */
 
 
@@ -123,23 +131,22 @@ async function homepage() {
  /*  ==================off canvas cancel button  ================== */
         const buttoncancel = document.querySelector("#buttoncancel") 
         buttoncancel.addEventListener("click",()=>{
+
         
             bsOffcanvas.hide()
-            
+            console.log("aaaa");
             if (livePricing.length===6) {
                 const findlastcoin=coins.find((coin)=> coin.id===livePricing[5].id,)
                 findlastcoin.ischecked=false
                 livePricing.pop()
+                
             }
             draw(coins) }
         )
- /*  ==================fetch data  ================== */
- if (coins[0]===undefined) {
-    coins=await getCoins()
-} 
+ 
 
  /*  ==================draw first time  ================== */
-        draw(coins)
+        
         
     } catch (error) {
         
@@ -306,15 +313,28 @@ return result
 
 /*  ==================start the ui for cards ================== */
 function draw(data) {
-    if (!Array.isArray(data)) return
-    const coinList = document.querySelector("#coinList")
-    coinList.innerHTML=""
+  if (!Array.isArray(data)) return
+  removeEventListener("scroll",scroll)
+  const coinList = document.querySelector("#coinList")
+  coinList.innerHTML=""
 ;
 
-    const DrawCoinUI =data.map(current =>getSingleCoinUI(current))
-    coinList.append(...DrawCoinUI)    
+  const DrawCoinUI =data.map(current =>getSingleCoinUI(current))
+   
+  let start=0
+  let end=200
+let arraySlice=DrawCoinUI.slice(start,end)
+coinList.append(...arraySlice)  
+function scroll() {
+  if (window.scrollY+window.innerHeight >= document.documentElement.scrollHeight-5) {
+    start=start+200
+    end=200+200
+    arraySlice=DrawCoinUI.slice(start,end)
+    coinList.append(...arraySlice)  
+  }
 }
-
+  window.addEventListener("scroll",scroll)
+}
 
 /*  ==================single card ================== */
 function  getSingleCoinUI(coin){
@@ -353,7 +373,8 @@ if (coin.ischecked===true)
 {toggle.checked=true}
 else{toggle.checked=false}
 /*  ==================toggle event  ================== ==============================*/
-toggle.addEventListener("click", ()=>checkedtoggle(coin))
+toggle.addEventListener("click", ()=>{
+checkedtoggle(coin)})
 
 const placeHolderImg= document.createElement("div")
 placeHolderImg.className="col-4 d-flex justify-content-center"
@@ -370,6 +391,7 @@ button.className="btn btn-success"
 
 /*  ==================more info event  ================== ==============================*/
 button.addEventListener("click", async () => {
+  
     try {
          loader.style.visibility = "visible"
          
@@ -484,6 +506,7 @@ function checkedtoggle(coin){
    
 
     if (  event.target.checked) {
+      
         if (livePricing.length===5) {
             livePricing.push(coin)
             coin.ischecked=true

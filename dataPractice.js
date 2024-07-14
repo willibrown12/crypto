@@ -1,4 +1,4 @@
-var coins2=[
+var coins4=[
     {
         "id": "01coin",
         "symbol": "zoc",
