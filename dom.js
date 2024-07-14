@@ -1,6 +1,6 @@
 
 /*  ==================global  ================== ==============================*/
-
+let scrollHandler;
 const livePricing=[]
 let myChart={}
 let myInterval
@@ -314,7 +314,7 @@ return result
 /*  ==================start the ui for cards ================== */
 function draw(data) {
   if (!Array.isArray(data)) return
-  removeEventListener("scroll",scroll)
+   
   const coinList = document.querySelector("#coinList")
   coinList.innerHTML=""
 ;
@@ -325,15 +325,25 @@ function draw(data) {
   let end=200
 let arraySlice=DrawCoinUI.slice(start,end)
 coinList.append(...arraySlice)  
-function scroll() {
+function scrollDo() {
   if (window.scrollY+window.innerHeight >= document.documentElement.scrollHeight-5) {
+     
     start=start+200
-    end=200+200
+    end=end+200
     arraySlice=DrawCoinUI.slice(start,end)
     coinList.append(...arraySlice)  
   }
 }
-  window.addEventListener("scroll",scroll)
+
+
+if (scrollHandler) {
+  window.removeEventListener("scroll", scrollHandler); 
+}
+
+scrollHandler = scrollDo; 
+window.addEventListener("scroll", scrollHandler); 
+
+ 
 }
 
 /*  ==================single card ================== */
@@ -374,7 +384,9 @@ if (coin.ischecked===true)
 else{toggle.checked=false}
 /*  ==================toggle event  ================== ==============================*/
 toggle.addEventListener("click", ()=>{
-checkedtoggle(coin)})
+  
+
+  checkedtoggle(coin)})
 
 const placeHolderImg= document.createElement("div")
 placeHolderImg.className="col-4 d-flex justify-content-center"
