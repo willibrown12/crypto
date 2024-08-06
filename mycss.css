@@ -126,3 +126,20 @@
 }
 
 
+.btn {
+    font-family: "Pixelify Sans", sans-serif;
+}
+
+
+
+.textbox{
+display: flex;
+justify-content: center;
+border: dashed , rgb(0, 200, 0) 1px;
+color: white;
+padding: 2%;
+margin-top: 2%;
+margin-bottom: 2%;
+text-align: center;
+flex-direction: column;
+}

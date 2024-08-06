@@ -1,6 +1,7 @@
 
 /*  ==================global  ================== ==============================*/
 let scrollHandler;
+
 const livePricing=[]
 let myChart={}
 let myInterval
@@ -22,6 +23,7 @@ const coinList = document.querySelector("#homepage")
 const liveReportdiv = document.querySelector("#liveReportdiv")
 const aboutdiv = document.querySelector("#aboutdiv")
 liveReportdiv.classList.add("d-none")
+aboutdiv.classList.add("d-none")
 
    /*  ==================load main page ================== */
     homepage()
@@ -133,14 +135,14 @@ async function homepage() {
         buttoncancel.addEventListener("click",()=>{
 
         
-            bsOffcanvas.hide()
-            console.log("aaaa");
+           
             if (livePricing.length===6) {
                 const findlastcoin=coins.find((coin)=> coin.id===livePricing[5].id,)
                 findlastcoin.ischecked=false
                 livePricing.pop()
                 
             }
+            bsOffcanvas.hide()
             draw(coins) }
         )
  
@@ -259,12 +261,9 @@ function aboutPage() {
     clearInterval(myInterval)
 
     const aboutdiv = document.querySelector("#aboutdiv")
-    aboutdiv.innerHTML=""
+ 
     aboutdiv.classList.remove("d-none")
-    const para = document.createElement("p")
-      para.innerText="i love going to the toilet"
-    
-      aboutdiv.append(para)
+   
 }
 
 
@@ -281,8 +280,13 @@ function aboutPage() {
         
        
        const arrayKey=[]
-       arrayKey.push(dataToObj[searchvalue])
+       if (dataToObj[searchvalue]!= undefined) {
+        arrayKey.push(dataToObj[searchvalue])
          draw(arrayKey) 
+       }else{
+        draw(arrayKey) 
+       }
+       
     
 
     } else {
@@ -393,7 +397,7 @@ placeHolderImg.className="col-4 d-flex justify-content-center"
 placeHolderImg.innerHTML=""
 const para = document.createElement("p")
 para.className="card-text col-8 mb-0"
-para.innerText=coin?.symbol
+para.innerText=coin?.id
 
 const placeHolderbutton= document.createElement("div")
 placeHolderbutton.className="d-flex align-items-center "
@@ -417,7 +421,7 @@ button.addEventListener("click", async () => {
    imageCoin.src=result?.image?.large
    imageCoin.style.height="75px"
    if (result?.market_data.current_price?.usd) {
-    para.innerText="dollar-$= "+result?.market_data.current_price?.usd+"\n euro-€= "+result?.market_data.current_price?.eur+"\n shekel-₪= "+result?.market_data.current_price?.ils
+    para.innerText="$= "+result?.market_data.current_price?.usd+"\n €= "+result?.market_data.current_price?.eur+"\n ₪= "+result?.market_data.current_price?.ils
    } else {
     para.innerText="there is no data about this coin price"
    }
@@ -484,7 +488,7 @@ async function getCoinInfoId(id) {
 
 /*  ==================cache function ================== ==============================*/
 async function getDataFromCacheOrApi(id) {
-    const TIMESTAMP_DIFF = 10000;
+    const TIMESTAMP_DIFF = 12000;
    
     if (cache[id]) {
         console.log("from cache");
